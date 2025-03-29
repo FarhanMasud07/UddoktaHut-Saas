@@ -4,6 +4,7 @@
     "dev": "concurrently \"npm run dev-backend\" \"npm run dev-frontend\"",
     "dev-backend": "cd backend && node ../server.js",
     "dev-frontend": "cd frontend && next dev",
+    "install-all": "cd frontend npm install && cd backend npm install",
     "build": "cd frontend && next build",
     "start": "npm run build && node server.js"
   },
