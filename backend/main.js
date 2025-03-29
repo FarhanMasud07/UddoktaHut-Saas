@@ -6,7 +6,7 @@ import { errorHandler } from "./app/middleware/errorHandler.js";
 import { syncSequlizeBasedOnEnvironment } from "./app/models/RootModel.js";
 import cookieParser from "cookie-parser";
 
-const app = express();
+export const app = express();
 const port = env.PORT || 4000;
 
 app.use(express.json());

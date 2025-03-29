@@ -8,3 +8,4 @@ backend/.env*
 frontend/.next/
 
 .DS_Store
+.gitignore

@@ -1,0 +1,15 @@
+{
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently \"npm run dev-backend\" \"npm run dev-frontend\"",
+    "dev-backend": "cd backend && node ../server.js",
+    "dev-frontend": "cd frontend && next dev",
+    "build": "next build frontend",
+    "start": "npm run build && node server.js"
+  },
+  "dependencies": {
+    "concurrently": "^9.1.2",
+    "express": "^4.21.2",
+    "next": "^15.2.4"
+  }
+}
