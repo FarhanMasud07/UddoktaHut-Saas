@@ -9,15 +9,24 @@ const handle = nextApp.getRequestHandler();
 
 const app = express();
 
-nextApp.prepare().then(() => {
-  app.use("/api", backendApp);
+const startServer = async () => {
+  try {
+    await nextApp.prepare();
 
-  app.all("*", (req, res) => {
-    return handle(req, res);
-  });
+    app.use("/api", backendApp);
 
-  const PORT = env.PORT || 4000;
-  app.listen(PORT, () => {
-    console.log(`🚀 Server running at http://localhost:${PORT}`);
-  });
-});
+    app.all("*", (req, res) => {
+      return handle(req, res);
+    });
+
+    const PORT = env.PORT || 4000;
+    app.listen(PORT, () => {
+      console.log(`🚀 Server running at http://localhost:${PORT}`);
+    });
+  } catch (err) {
+    console.error("❌ Failed to prepare Next.js app:", err);
+    process.exit(1);
+  }
+};
+
+startServer();
