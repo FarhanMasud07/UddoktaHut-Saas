@@ -4,10 +4,8 @@
     "dev": "concurrently \"npm run dev-backend\" \"npm run dev-frontend\"",
     "dev-backend": "cd backend && node ../server.js",
     "dev-frontend": "cd frontend && next dev",
-    "install-frontend": "cd frontend npm install",
-    "install-backend": "cd backend npm install",
-    "build": "cd frontend && next build",
-    "start": "cd frontend npm start && node server.js"
+    "prod": "npm install && cd backend && npm install && cd ../frontend && npm install && npm run build",
+    "start": "node server.js"
   },
   "dependencies": {
     "concurrently": "^9.1.2",
