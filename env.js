@@ -1,5 +1,6 @@
 import dotenv from "dotenv";
 dotenv.config();
+
 export const env = {
   PORT: process.env.PORT,
   ZOHO_APP_PASSWORD: process.env.ZOHO_APP_PASSWORD,
@@ -20,4 +21,5 @@ export const env = {
   DB_PORT: process.env.DB_PORT,
   // OPENAI_API_KEY: process.env.OPENAI_API_KEY,
   isProd: process.env.NODE_ENV === "production",
+  isDev: process.env.NODE_ENV === "development",
 };

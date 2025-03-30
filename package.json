@@ -7,11 +7,13 @@
     "install-frontend": "cd frontend npm install",
     "install-backend": "cd backend npm install",
     "build": "cd frontend && next build",
-    "start": "npm run build && node server.js"
+    "start": "cd frontend npm start && node server.js"
   },
   "dependencies": {
     "concurrently": "^9.1.2",
+    "dotenv": "^16.4.7",
     "express": "^4.21.2",
-    "next": "^15.2.4"
+    "next": "^15.2.4",
+    "path": "^0.12.7"
   }
 }

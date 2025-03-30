@@ -29,7 +29,7 @@ const verifyEmail = async (req, res, next) => {
         status: 400,
       });
 
-    setCookieAccessRefreshToken(res);
+    setCookieAccessRefreshToken(res, verifiedTokens);
 
     return res.status(200).json({
       verified: true,
@@ -65,7 +65,7 @@ const smsVerify = async (req, res, next) => {
         verified: false,
         error: "Invalid or expired otp",
       });
-
+    console.log(verifiedTokens);
     setCookieAccessRefreshToken(res, verifiedTokens);
 
     return res.status(200).json({

@@ -6,7 +6,7 @@ import {
   verifyOtp,
 } from "../lib/utils.js";
 import { Role, sequelize, UserRole } from "../models/RootModel.js";
-import { env } from "../config/env.js";
+import { env } from "../../../env.js";
 import { User } from "../models/RootModel.js";
 import nodemailer from "nodemailer";
 import { generateTokens } from "./commonService.js";

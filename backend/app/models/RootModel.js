@@ -1,5 +1,5 @@
 import { sequelize } from "../config/database.js";
-import { env } from "../config/env.js";
+import { env } from "../../../env.js";
 import Role from "./Role.js";
 import User from "./User.js";
 import UserRole from "./UserRole.js";

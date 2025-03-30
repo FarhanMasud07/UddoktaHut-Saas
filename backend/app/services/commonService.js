@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { env } from "../config/env.js";
+import { env } from "../../../env.js";
 
 const generateTokens = (user) => {
   const accessToken = jwt.sign(
@@ -29,13 +29,11 @@ const setCookieAccessRefreshToken = (res, verifiedTokens) => {
   const { accessToken, refreshToken } = verifiedTokens;
   const cookieOption = {
     httpOnly: true,
-    secure: false,
+    secure: env.NODE_ENV === "production",
     sameSite: "Lax",
     path: "/",
     maxAge: 60 * 60 * 1000,
   };
-
-  if (!env.isProd) cookieOption.domain = "uddoktahut.local";
 
   res.cookie("accessToken", accessToken, cookieOption);
 

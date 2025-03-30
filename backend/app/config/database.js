@@ -1,5 +1,5 @@
 import { Sequelize } from "sequelize";
-import { env } from "./env.js";
+import { env } from "../../../env.js";
 
 const isProduction = env.NODE_ENV === "production";
 
