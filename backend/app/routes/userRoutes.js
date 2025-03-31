@@ -6,6 +6,7 @@ import {
   sendEmail,
   sendSms,
   smsVerify,
+  userOnboardedAccess,
   verifyEmail,
 } from "../controllers/userController.js";
 import {
@@ -20,16 +21,13 @@ import {
 const userRoutes = express.Router();
 
 userRoutes.post("/mail/send", validate(emailproviderSchema), sendEmail);
-userRoutes.post("/mail/verify", verifyEmail);
+userRoutes.post("/mail/verify", validate(emailVerifySchema), verifyEmail);
 
 userRoutes.post("/sms/send", validate(smsProviderSchema), sendSms);
 userRoutes.post("/sms/verify", validate(smsProviderVerifySchema), smsVerify);
 
-userRoutes.post(
-  "/assign-role",
-  validate(userRolesSchema),
-  //authenticateUser,
-  addRolesToUser
-);
+userRoutes.post("/authenticate", userOnboardedAccess);
+
+userRoutes.post("/assign-role", validate(userRolesSchema), addRolesToUser);
 
 export { userRoutes };

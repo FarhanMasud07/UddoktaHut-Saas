@@ -1,7 +1,19 @@
+import { getOnboardedUser } from '@/lib/actions/auth.action'
+import { headers } from 'next/headers';
 import NextTopLoader from 'nextjs-toploader'
 import React from 'react'
 
-export default function layout({ children }) {
+export default async function layout({ children }) {
+    const requestHeader = await headers();
+    const id = requestHeader.get('x-user-id');
+    const userOnboarded = await getOnboardedUser({ id });
+
+
+    if (!userOnboarded) return (
+        <div>
+            Not accessible
+        </div>
+    )
     return (
         <div>
             <NextTopLoader color="#05df72"

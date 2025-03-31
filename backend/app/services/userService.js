@@ -54,7 +54,7 @@ const verifyEmailToProceed = async (data) => {
       id: user.id,
       email: user.email,
     };
-    return generateTokens(userPayload);
+    return generateTokens(userPayload, false);
   }
   return null;
 };
@@ -104,18 +104,21 @@ const verifySmsProvider = async (data) => {
       id: user.id,
       phoneNumber: user.phone_number,
     };
-    return generateTokens(userPayload);
+    return generateTokens(userPayload, false);
   }
   return null;
 };
 
-const assignRoleToUser = async (token, roles) => {
+const onboardedAccess = async (id) => {
+  return await UserRole.findOne({ where: { user_id: id } });
+};
+
+const assignRoleToUser = async (data) => {
+  const { userId, roles } = data;
   const transaction = await sequelize.transaction();
   try {
-    const extractedPayload = jwt.verify(token, env.JWT_SECRET);
-    extractedPayload.roles = roles.map((roleId) =>
-      roleId === 1 ? "admin" : "employee"
-    );
+    const isAdmin = roles.includes(1);
+    const onboarded = isAdmin ? true : false;
 
     const validRoles = await Role.findAll({
       where: {
@@ -127,9 +130,9 @@ const assignRoleToUser = async (token, roles) => {
     if (validRoles.length !== roles.length)
       throw new Error("Some roles are invalid");
 
-    const validUser = await Role.findOne({
+    const validUser = await User.findOne({
       where: {
-        id: extractedPayload.id,
+        id: userId,
       },
       transaction,
     });
@@ -141,13 +144,28 @@ const assignRoleToUser = async (token, roles) => {
       roles.map((roleId) => ({
         user_id: validUser.id,
         role_id: roleId,
+        onboarded: onboarded,
       })),
       { transaction }
     );
 
     await transaction.commit();
+    if (userRoles && userRoles.length) {
+      const payload = validUser.email
+        ? {
+            id: validUser.id,
+            email: validUser.email,
+            roles,
+          }
+        : {
+            id: validUser.id,
+            phoneNumber: validUser.phoneNumber,
+            roles,
+          };
 
-    if (userRoles && userRoles.length) return generateTokens(extractedPayload);
+      const tokens = generateTokens(payload, onboarded);
+      return { tokens, onboarded };
+    }
     return null;
   } catch (err) {
     await transaction.rollback();
@@ -161,4 +179,5 @@ export {
   sendSmsProvider,
   verifySmsProvider,
   assignRoleToUser,
+  onboardedAccess,
 };

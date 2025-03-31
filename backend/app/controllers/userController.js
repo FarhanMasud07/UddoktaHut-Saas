@@ -5,6 +5,7 @@ import {
   sendSmsProvider,
   verifySmsProvider,
   assignRoleToUser,
+  onboardedAccess,
 } from "../services/userService.js";
 
 const sendEmail = async (req, res, next) => {
@@ -65,7 +66,6 @@ const smsVerify = async (req, res, next) => {
         verified: false,
         error: "Invalid or expired otp",
       });
-    console.log(verifiedTokens);
     setCookieAccessRefreshToken(res, verifiedTokens);
 
     return res.status(200).json({
@@ -78,19 +78,46 @@ const smsVerify = async (req, res, next) => {
   }
 };
 
-const addRolesToUser = async (req, res, next) => {
+const userOnboardedAccess = async (req, res, next) => {
   try {
-    const { token, roles } = req.body;
-    const result = await assignRoleToUser(token, roles);
+    const { id } = req.body;
+    const result = await onboardedAccess(id);
     if (!result)
-      return res.status(400).json({
-        verified: false,
-        error: "Invalid or expired otp",
+      return res.status(401).json({
+        isAuth: false,
+        error: "Not authorized",
       });
-    return res.status(201).json({ token: result, success: true });
+    return res.status(200).json({ onboarded: result.onboarded });
   } catch (err) {
     next(err);
   }
 };
 
-export { sendEmail, verifyEmail, sendSms, smsVerify, addRolesToUser };
+const addRolesToUser = async (req, res, next) => {
+  try {
+    const verifiedTokens = await assignRoleToUser(req.body);
+    if (!verifiedTokens)
+      return res.status(400).json({
+        verified: false,
+        error: "Invalid or expired otp",
+      });
+
+    setCookieAccessRefreshToken(res, verifiedTokens.tokens);
+    return res.status(201).json({
+      tokens: verifiedTokens.tokens,
+      success: true,
+      onboarded: verifiedTokens.onboarded,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export {
+  sendEmail,
+  verifyEmail,
+  sendSms,
+  smsVerify,
+  addRolesToUser,
+  userOnboardedAccess,
+};

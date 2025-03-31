@@ -1,17 +1,19 @@
 import jwt from "jsonwebtoken";
 import { env } from "../../../env.js";
 
-const generateTokens = (user) => {
+const generateTokens = (user, onboarding) => {
   const accessToken = jwt.sign(
     user.email
       ? {
           id: user.id,
           email: user.email,
-          roles: user.roles || null,
+          onboarding: onboarding,
+          roles: user.roles || null, //temporary admin to test
         }
       : {
           id: user.id,
           phoneNumber: user.phoneNumber,
+          onboarding: onboarding,
           roles: user.roles || null,
         },
     env.JWT_SECRET,

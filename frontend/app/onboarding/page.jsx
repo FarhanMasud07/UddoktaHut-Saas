@@ -1,3 +1,4 @@
+import OnboardingChoice from "@/components/OnboardingChoice";
 import { headers } from "next/headers"
 
 export default async function Onboarding() {
@@ -7,6 +8,7 @@ export default async function Onboarding() {
         <>
             <div>onboading page</div>
             <p>{userId}</p>
+            <OnboardingChoice userId={userId} />
         </>
     )
 }

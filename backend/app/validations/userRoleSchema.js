@@ -1,7 +1,9 @@
 import { z } from "zod";
 
 const userRolesSchema = z.object({
-  token: z.string({ message: "token is required" }),
+  userId: z
+    .number({ message: "user ID is required" })
+    .min(1, { message: "User ID must be a positive integer." }),
   roles: z
     .array(
       z

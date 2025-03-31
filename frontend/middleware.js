@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 import { CONFIG } from "./lib/config";
-import { protectedRoutes } from "./constants/rootConstant";
-import jwt from "jsonwebtoken";
+import { allRoles, protectedRoutes } from "./constants/rootConstant";
+import { jwtVerify } from "jose";
 
-export function middleware(req) {
+export async function middleware(req) {
   const host = req.headers.get("host") || "";
 
   if (!host) return NextResponse.next();
@@ -15,24 +15,50 @@ export function middleware(req) {
   const isProtectedRoute = protectedRoutes.some((route) =>
     req.nextUrl.pathname.startsWith(route)
   );
+  const path = req.nextUrl.pathname;
   if (isProtectedRoute) {
     const accessToken = req.cookies.get("accessToken")?.value;
     if (!accessToken) return NextResponse.redirect(new URL("/login", req.url));
 
     try {
-      const decode = jwt.decode(accessToken, process.env.JWT_SECRET);
-      if (decode) {
-        const requestHeaders = new Headers(req.headers);
-        requestHeaders.set("x-user-roles", decode.roles);
-        requestHeaders.set("x-user-id", decode.id);
-        return NextResponse.next({
-          request: {
-            headers: requestHeaders,
-          },
-        });
-      } else {
+      const secret = new TextEncoder().encode(process.env.JWT_SECRET);
+
+      const { payload } = await jwtVerify(accessToken, secret);
+
+      const requestHeaders = new Headers(req.headers);
+
+      if (!payload?.id)
         return NextResponse.redirect(new URL("/login", req.url));
+
+      requestHeaders.set("x-user-id", payload.id);
+
+      const onboarded = payload.onboarding || false;
+      const roles = payload.roles || [];
+      const isAdmin = roles.includes(allRoles.admin);
+      const isEmployee = roles.includes(allRoles.employee);
+
+      if (!onboarded && path !== "/onboarding" && !isAdmin && !isEmployee) {
+        return NextResponse.redirect(new URL("/onboarding", req.url));
       }
+
+      if (isEmployee && !onboarded && path !== "/employee") {
+        return NextResponse.redirect(new URL("/employee", req.url));
+      }
+
+      if (
+        (isAdmin || isEmployee) &&
+        onboarded &&
+        (path === "/onboarding" || path === "/employee")
+      ) {
+        console.log("admin or employee called");
+        return NextResponse.redirect(new URL("/dashboard", req.url));
+      }
+
+      return NextResponse.next({
+        request: {
+          headers: requestHeaders,
+        },
+      });
     } catch (err) {
       console.log(err);
       return NextResponse.redirect(new URL("/login", req.url));
