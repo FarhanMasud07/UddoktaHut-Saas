@@ -126,6 +126,8 @@ const assignRoleToUser = async (data) => {
       },
       transaction,
     });
+    console.log(validRoles, "validRoles");
+    console.log(roles, "roles");
 
     if (validRoles.length !== roles.length)
       throw new Error(`Some roles are invalid ${validRoles} ---  ${roles}`);
