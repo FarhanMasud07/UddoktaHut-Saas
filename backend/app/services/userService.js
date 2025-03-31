@@ -128,7 +128,7 @@ const assignRoleToUser = async (data) => {
     });
 
     if (validRoles.length !== roles.length)
-      throw new Error("Some roles are invalid");
+      throw new Error(`Some roles are invalid ${validRoles} ---  ${roles}`);
 
     const validUser = await User.findOne({
       where: {
