@@ -114,7 +114,8 @@ const onboardedAccess = async (id) => {
 };
 
 const assignRoleToUser = async (data) => {
-  const { userId, roles } = data;
+  const { userId, roles: rawRoles } = data;
+  const roles = rawRoles.map(Number);
   const transaction = await sequelize.transaction();
   try {
     const isAdmin = roles.includes(1);
