@@ -4,13 +4,12 @@ export const OnboardProceed = async (data) => {
   const { userId, roles, storeName, storeType, storeAddress } = data;
   try {
     const shopSlug = storeName
-      .split(" ")
-      .join("-")
       .trim()
-      .replace(/[^a-z0-9\s-]/g, "") // Remove special chars like &, %, @
+      .toLowerCase()
+      .replace(/[^a-z0-9\s-]/g, "") // Remove special characters
       .replace(/\s+/g, "-") // Replace spaces with hyphens
-      .replace(/-+/g, "-")
-      .toLowerCase();
+      .replace(/-+/g, "-") // Remove multiple consecutive hyphens
+      .replace(/^-+|-+$/g, ""); // Trim hyphens from start/end
 
     const response = await fetch("/api/user/assign-role", {
       method: "POST",
