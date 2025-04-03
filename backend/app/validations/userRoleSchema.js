@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const userRolesSchema = z.object({
+const userRolesAndStoreSchema = z.object({
   userId: z
     .number({ message: "user ID is required" })
     .min(1, { message: "User ID must be a positive integer." }),
@@ -13,6 +13,10 @@ const userRolesSchema = z.object({
         .min(1, { message: "Role ID must be a positive integer." })
     )
     .nonempty({ message: "Atleast one role needed" }),
+  storeName: z.string({ message: "Store name is required" }),
+  storeUrl: z.string({ message: "Store url is required" }),
+  storeType: z.string({ message: "Store type is required" }),
+  storeAddress: z.string().optional(),
 });
 
-export { userRolesSchema };
+export { userRolesAndStoreSchema };

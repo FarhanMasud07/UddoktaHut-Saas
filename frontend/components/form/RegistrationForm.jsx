@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "../ui/form"
 import { useState } from "react"
 import { passwordRules } from "@/constants/rootConstant"
-import { RegistrationFormValidation } from "@/lib/RegistrationValidation"
+import { RegistrationFormValidation } from "@/lib/validation/RegistrationValidation"
 import { registerUser } from "@/lib/actions/register.action"
 import { toast } from "sonner"
 import SubmitButton from "../common/SubmitButton"

@@ -1,4 +1,3 @@
-import jwt from "jsonwebtoken";
 import {
   generateOtp,
   passwordHashing,
@@ -7,7 +6,7 @@ import {
 } from "../lib/utils.js";
 import { Role, sequelize, UserRole } from "../models/RootModel.js";
 import { env } from "../../../env.js";
-import { User } from "../models/RootModel.js";
+import { User, Store } from "../models/RootModel.js";
 import nodemailer from "nodemailer";
 import { generateTokens } from "./commonService.js";
 
@@ -110,13 +109,29 @@ const verifySmsProvider = async (data) => {
 };
 
 const onboardedAccess = async (id) => {
-  return await UserRole.findOne({ where: { user_id: id } });
+  const user = await User.findOne({ where: { id } });
+  const userRole = await UserRole.findOne({ where: { user_id: id } });
+
+  return {
+    name: user.name,
+    email: user.email,
+    phoneNumber: user.phone_number,
+    onboarded: userRole.onboarded,
+    role: userRole.role_id,
+  };
 };
 
-const assignRoleToUser = async (data) => {
-  const { userId, roles } = data;
+const assignRoleToUserAndCreateStore = async (data) => {
+  const { userId, roles, storeName, storeAddress, storeType, storeUrl } = data;
   const transaction = await sequelize.transaction();
   try {
+    const existStore = await Store.findOne({
+      where: { store_name: storeName },
+      transaction,
+    });
+
+    if (existStore) throw new Error("This (business/store) name already exist");
+
     const isAdmin = roles.includes(1);
     const onboarded = isAdmin ? true : false;
 
@@ -126,8 +141,6 @@ const assignRoleToUser = async (data) => {
       },
       transaction,
     });
-    console.log(validRoles, "validRoles");
-    console.log(roles, "roles");
 
     if (validRoles.length !== roles.length)
       throw new Error(`Some roles are invalid ${validRoles} ---  ${roles}`);
@@ -151,23 +164,33 @@ const assignRoleToUser = async (data) => {
       { transaction }
     );
 
-    await transaction.commit();
-    if (userRoles && userRoles.length) {
-      const payload = validUser.email
-        ? {
-            id: validUser.id,
-            email: validUser.email,
-            roles,
-          }
-        : {
-            id: validUser.id,
-            phoneNumber: validUser.phoneNumber,
-            roles,
-          };
+    const store = await Store.create(
+      {
+        user_id: validUser.id,
+        store_name: storeName,
+        store_address: storeAddress,
+        store_type: storeType,
+        store_url: storeUrl,
+      },
+      { transaction }
+    );
 
-      const tokens = generateTokens(payload, onboarded);
-      return { tokens, onboarded };
-    }
+    await transaction.commit();
+
+    const storePayload = {
+      store_name: storeName,
+      store_address: storeAddress,
+      store_type: storeType,
+      store_url: storeUrl,
+    };
+
+    if (userRoles && userRoles.length && store)
+      return generateFinalTokenAfterOnboarded(
+        validUser,
+        roles,
+        storePayload,
+        onboarded
+      );
     return null;
   } catch (err) {
     await transaction.rollback();
@@ -175,11 +198,36 @@ const assignRoleToUser = async (data) => {
   }
 };
 
+function generateFinalTokenAfterOnboarded(validUser, roles, store, onboarded) {
+  const payload = validUser.email
+    ? {
+        id: validUser.id,
+        email: validUser.email,
+        roles,
+        storeName: store.store_name,
+        storeAddress: store.store_address,
+        storeType: store.store_type,
+        storeUrl: store.store_url,
+      }
+    : {
+        id: validUser.id,
+        phoneNumber: validUser.phoneNumber,
+        roles,
+        storeName: store.store_name,
+        storeAddress: store.store_address,
+        storeType: store.store_type,
+        storeUrl: store.store_url,
+      };
+
+  const tokens = generateTokens(payload, onboarded);
+  return { tokens, onboarded };
+}
+
 export {
   sendEmailVarification,
   verifyEmailToProceed,
   sendSmsProvider,
   verifySmsProvider,
-  assignRoleToUser,
+  assignRoleToUserAndCreateStore,
   onboardedAccess,
 };

@@ -49,7 +49,7 @@ const RenderField = ({ field, props }) => {
     switch (fieldType) {
         case FormFieldType.INPUT:
             return (
-                <div className="relative flex rounded-md border">
+                <div className={`relative flex ${iconSrc && 'rounded-md border '}`}>
                     {iconSrc && (
                         <Image
                             src={iconSrc}
@@ -65,7 +65,7 @@ const RenderField = ({ field, props }) => {
                             {...field}
                             {...(inputProps || {})}
                             type={isPassword ? (!showPassword ? "password" : "text") : 'text'}
-                            className="shad-input border-0 placeholder:text-dark-700/95"
+                            className={`shad-input  ${!iconSrc ? 'border' : 'border-0'}`}
                         />
                     </FormControl>
 
@@ -152,7 +152,7 @@ const RenderField = ({ field, props }) => {
                 <FormControl>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl>
-                            <SelectTrigger className="shad-select-trigger">
+                            <SelectTrigger className="!h-11 shad-select-trigger">
                                 <SelectValue placeholder={placeholder} />
                             </SelectTrigger>
                         </FormControl>

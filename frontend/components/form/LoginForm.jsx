@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils"
 import { CustomFormField, FormFieldType } from "../CustomFormField"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod";
-import { LoginFormValidation } from "@/lib/loginFormValidation"
+import { LoginFormValidation } from "@/lib/validation/loginFormValidation"
 import { Form } from "../ui/form"
 import { useState } from "react"
 import SubmitButton from "../common/SubmitButton"

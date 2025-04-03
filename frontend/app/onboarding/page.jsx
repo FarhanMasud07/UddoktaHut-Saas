@@ -1,14 +1,13 @@
-import OnboardingChoice from "@/components/OnboardingChoice";
-import { headers } from "next/headers"
+import { Stepper } from "@/components/stepper/Stepper";
+import { StepperProvider } from "../context/StepperContext";
 
 export default async function Onboarding() {
-    const header = await headers()
-    const userId = header.get('x-user-id');
     return (
-        <>
-            <div>onboading page</div>
-            <p>{userId}</p>
-            <OnboardingChoice userId={userId} />
-        </>
+        <main className="p-6" >
+            <StepperProvider>
+                <Stepper />
+            </StepperProvider>
+
+        </main >
     )
 }

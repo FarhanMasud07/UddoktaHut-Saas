@@ -1,5 +1,3 @@
-"use client";
-
 import { toast } from "sonner";
 
 export const registerUser = async (selectedMethod, data) => {
@@ -14,6 +12,7 @@ export const registerUser = async (selectedMethod, data) => {
               email: data.email,
               password: data.password,
             }),
+            credentials: "include",
           })
         : await fetch("/api/user/sms/send", {
             method: "POST",
@@ -23,11 +22,10 @@ export const registerUser = async (selectedMethod, data) => {
               phoneNumber: data.phoneNumber,
               password: data.password,
             }),
+            credentials: "include",
           });
     return await response.json();
   } catch (err) {
-    toast("Something went wrong", {
-      description: err.message,
-    });
+    console.log(err);
   }
 };

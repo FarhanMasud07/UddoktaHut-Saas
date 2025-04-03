@@ -1,5 +1,3 @@
-"use client";
-
 import { toast } from "sonner";
 
 export const OtpVerify = async ({ identifier, otp, selectedMethod }) => {

@@ -32,25 +32,21 @@ export async function middleware(req) {
 
       requestHeaders.set("x-user-id", payload.id);
 
+      if (payload.storeUrl) requestHeaders.set("x-store-url", payload.storeUrl);
+
       const onboarded = payload.onboarding || false;
       const roles = payload.roles || [];
       const isAdmin = roles.includes(allRoles.admin);
       const isEmployee = roles.includes(allRoles.employee);
 
-      if (!onboarded && path !== "/onboarding" && !isAdmin && !isEmployee) {
+      if (!onboarded && path !== "/onboarding")
         return NextResponse.redirect(new URL("/onboarding", req.url));
-      }
-
-      if (isEmployee && !onboarded && path !== "/employee") {
-        return NextResponse.redirect(new URL("/employee", req.url));
-      }
 
       if (
         (isAdmin || isEmployee) &&
         onboarded &&
-        (path === "/onboarding" || path === "/employee")
+        (path === "/onboarding" || path === "/onboarding/setup")
       ) {
-        console.log("admin or employee called");
         return NextResponse.redirect(new URL("/dashboard", req.url));
       }
 
@@ -81,7 +77,9 @@ function productionMiddleware(host, req) {
     if (subdomain) {
       const url = req.nextUrl.clone();
       url.pathname = `/store/${subdomain}${req.nextUrl.pathname}`;
-      return NextResponse.rewrite(url);
+      const response = NextResponse.rewrite(url);
+      response.cookies.set("subdomain", subdomain);
+      return response;
     }
   }
 
@@ -101,7 +99,9 @@ function developmentMiddleware(host, req) {
     if (subdomain) {
       const url = req.nextUrl.clone();
       url.pathname = `/store/${subdomain}${req.nextUrl.pathname}`;
-      return NextResponse.rewrite(url);
+      const response = NextResponse.rewrite(url);
+      response.cookies.set("subdomain", subdomain);
+      return response;
     }
   }
 

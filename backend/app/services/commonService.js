@@ -8,13 +8,15 @@ const generateTokens = (user, onboarding) => {
           id: user.id,
           email: user.email,
           onboarding: onboarding,
-          roles: user.roles || null, //temporary admin to test
+          roles: user.roles || null,
+          storeUrl: user.storeUrl,
         }
       : {
           id: user.id,
           phoneNumber: user.phoneNumber,
           onboarding: onboarding,
           roles: user.roles || null,
+          storeUrl: user.storeUrl,
         },
     env.JWT_SECRET,
     { expiresIn: "1h" }

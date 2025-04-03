@@ -9,8 +9,6 @@ const __dirname = path.dirname(__filename);
 // ✅ Load .env
 dotenv.config({ path: path.resolve(__dirname, "../../.env") });
 
-console.log("Loaded DB_USER:", process.env.DB_USER);
-
 export default {
   development: {
     username: process.env.DB_USER || "root",

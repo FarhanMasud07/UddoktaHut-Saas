@@ -1,8 +1,8 @@
 import express from "express";
 import { validate } from "../middleware/validateMiddleware.js";
-import { userRolesSchema } from "../validations/userRoleSchema.js";
+import { userRolesAndStoreSchema } from "../validations/userRoleSchema.js";
 import {
-  addRolesToUser,
+  addRolesToUserAndStore,
   sendEmail,
   sendSms,
   smsVerify,
@@ -28,6 +28,10 @@ userRoutes.post("/sms/verify", validate(smsProviderVerifySchema), smsVerify);
 
 userRoutes.post("/authenticate", userOnboardedAccess);
 
-userRoutes.post("/assign-role", validate(userRolesSchema), addRolesToUser);
+userRoutes.post(
+  "/assign-role",
+  validate(userRolesAndStoreSchema),
+  addRolesToUserAndStore
+);
 
 export { userRoutes };

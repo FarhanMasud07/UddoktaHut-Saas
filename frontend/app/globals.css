@@ -164,7 +164,7 @@
     @apply text-[36px] leading-[40px] font-bold;
   }
   .shad-input {
-    @apply border-[theme(color-dark-500)] h-11 focus-visible:ring-0 focus-visible:ring-offset-0 shadow-[none] ;
+    @apply text-[0.875rem] md:text-[14px] placeholder:text-dark-600 border-[theme(color-dark-700)] h-11 focus-visible:ring-0 focus-visible:ring-offset-0 shadow-[none];
   }
   .shad-alert-dialog {
     @apply space-y-5 outline-none;
@@ -186,6 +186,14 @@
   }
   .input-phone {
     @apply mt-2 h-11 rounded-md px-3 text-sm border placeholder:text-dark-700/95 ;
+  }
+
+  .shad-select-trigger {
+    @apply placeholder:text-dark-600 border-dark-700  focus:ring-0 focus:ring-offset-0 w-auto cursor-pointer ;
+  }
+
+  .shad-select-content {
+    @apply  border-dark-700;
   }
 }
 
