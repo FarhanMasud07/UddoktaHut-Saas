@@ -3,7 +3,14 @@ import { CONFIG } from "../config";
 export const OnboardProceed = async (data) => {
   const { userId, roles, storeName, storeType, storeAddress } = data;
   try {
-    const shopSlug = storeName.split(" ").join("-").toLowerCase();
+    const shopSlug = storeName
+      .split(" ")
+      .join("-")
+      .trim()
+      .replace(/[^a-z0-9\s-]/g, "") // Remove special chars like &, %, @
+      .replace(/\s+/g, "-") // Replace spaces with hyphens
+      .replace(/-+/g, "-")
+      .toLowerCase();
 
     const response = await fetch("/api/user/assign-role", {
       method: "POST",
