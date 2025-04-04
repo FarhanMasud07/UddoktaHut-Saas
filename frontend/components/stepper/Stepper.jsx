@@ -50,7 +50,7 @@ export function Stepper() {
                         className={cn(
                             "h-full bg-green-400 transition-all duration-500 ease-in-out",
                             currentStep === 0 && "w-0",
-                            currentStep === 1 && "w-1/2"
+                            (currentStep === 1 && !isFullyComplete) && "w-1/2",
                         )}
                     />
                 </div>
