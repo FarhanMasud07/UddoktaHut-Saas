@@ -109,15 +109,26 @@ const verifySmsProvider = async (data) => {
 };
 
 const onboardedAccess = async (id) => {
-  const user = await User.findOne({ where: { id } });
-  const userRole = await UserRole.findOne({ where: { user_id: id } });
+  const user = await User.findOne({
+    where: { id },
+    include: [
+      {
+        model: Role,
+        through: { model: UserRole, attributes: ["onboarded"] },
+        attributes: ["id", "role_name"],
+      },
+      {
+        model: Store,
+      },
+    ],
+  });
 
   return {
     name: user.name,
     email: user.email,
     phoneNumber: user.phone_number,
-    onboarded: userRole.onboarded,
-    role: userRole.role_id,
+    onboarded: user.Roles[0]?.user_roles?.onboarded,
+    role: user.Roles[0]?.user_roles?.role_id,
   };
 };
 
@@ -155,6 +166,9 @@ const assignRoleToUserAndCreateStore = async (data) => {
     if (!validUser) throw new Error("User is invalid");
 
     await UserRole.destroy({ where: { user_id: validUser.id }, transaction });
+
+    await Store.destroy({ where: { user_id: validUser.id }, transaction });
+
     const userRoles = await UserRole.bulkCreate(
       roles.map((roleId) => ({
         user_id: validUser.id,

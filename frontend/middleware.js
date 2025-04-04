@@ -34,7 +34,7 @@ export async function middleware(req) {
 
       if (payload.storeUrl) requestHeaders.set("x-store-url", payload.storeUrl);
 
-      const onboarded = payload.onboarding || false;
+      const onboarded = payload.onboarded || false;
       const roles = payload.roles || [];
       const isAdmin = roles.includes(allRoles.admin);
       const isEmployee = roles.includes(allRoles.employee);

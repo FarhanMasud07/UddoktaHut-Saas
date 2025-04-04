@@ -30,6 +30,9 @@ import {
 } from "@/components/ui/sidebar"
 import { ModeToggle } from "../common/ModeToggle"
 import { useUser } from "@/app/context/UserContext"
+import { toast } from "sonner"
+import { useRouter } from "next/navigation"
+import { useTopLoader } from "nextjs-toploader"
 
 function extractFirstLetterOfUser(user) {
     if (user && user.name)
@@ -38,9 +41,24 @@ function extractFirstLetterOfUser(user) {
 }
 
 export function NavUser() {
+    const router = useRouter();
+    const loader = useTopLoader();
     const { isMobile } = useSidebar();
     const { user } = useUser();
     let userLetter = extractFirstLetterOfUser(user) || 'SA';
+
+    async function handleLogout() {
+        loader.start();
+        try {
+            router.push('/logout')
+        } catch (err) {
+            toast('Something went wrong', {
+                description: err.message
+            });
+        } finally {
+            loader.done();
+        }
+    }
 
     return (
         <SidebarMenu>
@@ -106,7 +124,7 @@ export function NavUser() {
                             <ModeToggle />
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem className="cursor-pointer">
+                        <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
                             <LogOut className="dark:text-green-400 text-green-500" />
                             Log out
                         </DropdownMenuItem>

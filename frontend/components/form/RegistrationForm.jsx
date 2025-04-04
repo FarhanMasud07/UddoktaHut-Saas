@@ -8,7 +8,7 @@ import { Form } from "../ui/form"
 import { useState } from "react"
 import { passwordRules } from "@/constants/rootConstant"
 import { RegistrationFormValidation } from "@/lib/validation/RegistrationValidation"
-import { registerUser } from "@/lib/actions/register.action"
+import { registerUser } from "@/lib/actions/auth.action"
 import { toast } from "sonner"
 import SubmitButton from "../common/SubmitButton"
 import Link from "next/link"
@@ -125,6 +125,7 @@ export function RegistrationForm({ className, ...props }) {
                                     setPassword={setPassword}
                                     form={form}
                                     passwordRules={passwordRules}
+                                    isSignup={true}
                                 >
                                     <CustomFormField
                                         fieldType={FormFieldType.INPUT}
@@ -144,6 +145,7 @@ export function RegistrationForm({ className, ...props }) {
                                     setPassword={setPassword}
                                     form={form}
                                     passwordRules={passwordRules}
+                                    isSignup={true}
                                 >
                                     <CustomFormField
                                         fieldType={FormFieldType.PHONE_INPUT}

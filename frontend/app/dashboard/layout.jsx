@@ -1,19 +1,15 @@
 import { getOnboardedUser } from '@/lib/actions/auth.action'
 import { headers } from 'next/headers';
+import { UserProvider } from '../context/UserContext';
+import { redirect } from 'next/navigation';
 import NextTopLoader from 'nextjs-toploader'
 import React from 'react'
-import { UserProvider } from '../context/UserContext';
 
 export default async function layout({ children }) {
     const requestHeader = await headers();
     const id = requestHeader.get('x-user-id');
     const userOnboarded = await getOnboardedUser({ id });
-
-    if (!userOnboarded) return (
-        <div>
-            Not accessible
-        </div>
-    )
+    if (!userOnboarded) redirect('/logout')
     return (
         <div>
             <NextTopLoader color="#05df72"

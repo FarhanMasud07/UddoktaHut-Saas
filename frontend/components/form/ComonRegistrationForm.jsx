@@ -5,11 +5,12 @@ export const ComonRegistrationForm = ({
     password,
     passwordRules,
     setPassword,
+    isSignup,
     children
 }) => {
     return (
         <>
-            <CustomFormField
+            {isSignup && <CustomFormField
                 fieldType={FormFieldType.INPUT}
                 control={form.control}
                 name="name"
@@ -17,7 +18,7 @@ export const ComonRegistrationForm = ({
                 placeholder="Enter your full name"
                 iconSrc="/assets/icons/user.svg"
                 iconAlt="name"
-            />
+            />}
 
             {children}
 
@@ -29,7 +30,7 @@ export const ComonRegistrationForm = ({
                 placeholder="********"
                 iconSrc="/assets/icons/password.svg"
                 iconAlt="password"
-                inputProps={{
+                inputProps={isSignup && {
                     value: password,
                     onChange: (e) => {
                         setPassword(e.target.value);
@@ -38,7 +39,7 @@ export const ComonRegistrationForm = ({
                 }}
 
             />
-            {password && (
+            {password && passwordRules && passwordRules.length && isSignup && (
                 <ul className="space-y-1 text-sm">
                     {passwordRules.map((rule, i) => {
                         const passed = rule.test(password);

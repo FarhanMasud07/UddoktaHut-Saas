@@ -14,9 +14,11 @@ import { cn } from "@/lib/utils";
 import { CustomFormField, FormFieldType } from "../CustomFormField";
 import { SelectItem } from "../ui/select";
 import { businessTypes } from "@/constants/rootConstant";
+import { useTopLoader } from "nextjs-toploader";
 
 const OnboardProceedForm = ({ role }) => {
     const router = useRouter();
+    const loader = useTopLoader();
 
     const { setSubmitForm, setIsLoading, setIsFullyComplete } = useStepper();
 
@@ -47,6 +49,7 @@ const OnboardProceedForm = ({ role }) => {
 
     const onProceedSubmit = async (data) => {
         setIsLoading(true);
+        loader.start();
         try {
             const payload = {
                 ...data,
@@ -67,6 +70,7 @@ const OnboardProceedForm = ({ role }) => {
             setIsFullyComplete(false);
         } finally {
             setIsLoading(false);
+            loader.done();
         }
     };
     return (

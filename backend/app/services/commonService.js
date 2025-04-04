@@ -1,28 +1,20 @@
 import jwt from "jsonwebtoken";
 import { env } from "../../../env.js";
 
-const generateTokens = (user, onboarding) => {
-  const accessToken = jwt.sign(
-    user.email
-      ? {
-          id: user.id,
-          email: user.email,
-          onboarding: onboarding,
-          roles: user.roles || null,
-          storeUrl: user.storeUrl,
-        }
-      : {
-          id: user.id,
-          phoneNumber: user.phoneNumber,
-          onboarding: onboarding,
-          roles: user.roles || null,
-          storeUrl: user.storeUrl,
-        },
-    env.JWT_SECRET,
-    { expiresIn: "1h" }
-  );
+const generateTokens = (user, onboarded) => {
+  const data = {
+    id: user.id,
+    onboarded: onboarded,
+    roles: user.roles || null,
+    storeUrl: user.storeUrl,
+  };
+  user.email
+    ? (data.email = user.email)
+    : (data.phoneNumber = user.phoneNumber);
 
-  const refreshToken = jwt.sign({ id: user.id }, env.JWT_REFRESH_TOKEN, {
+  const accessToken = jwt.sign(data, env.JWT_SECRET, { expiresIn: "1h" });
+
+  const refreshToken = jwt.sign(data, env.JWT_REFRESH_TOKEN, {
     expiresIn: "7d",
   });
 
@@ -44,4 +36,15 @@ const setCookieAccessRefreshToken = (res, verifiedTokens) => {
   res.cookie("refreshToken", refreshToken, cookieOption);
 };
 
-export { generateTokens, setCookieAccessRefreshToken };
+const clearCookie = (res) => {
+  const cookieOption = {
+    httpOnly: true,
+    secure: env.NODE_ENV === "production",
+    sameSite: "Lax",
+    path: "/",
+  };
+  res.clearCookie("accessToken", cookieOption);
+  res.clearCookie("refreshToken", cookieOption);
+};
+
+export { generateTokens, setCookieAccessRefreshToken, clearCookie };
