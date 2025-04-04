@@ -22,6 +22,7 @@ export const OtpVerificationModal = ({ setShowOtpModal, identifier, selectedMeth
     const [passkey, setPasskey] = useState("");
     const [time, setTime] = useState(60);
     const [timeUp, setTimeUp] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         if (time === 0) {
@@ -44,6 +45,7 @@ export const OtpVerificationModal = ({ setShowOtpModal, identifier, selectedMeth
 
     const validatePasskey = async (e) => {
         e.preventDefault();
+        setIsLoading(true);
         if (passkey) {
             try {
                 const result = await OtpVerify({
@@ -64,8 +66,13 @@ export const OtpVerificationModal = ({ setShowOtpModal, identifier, selectedMeth
                 toast("Something went wrong", {
                     description: err.message,
                 });
+            } finally {
+                setIsLoading(false);
             }
 
+        } else {
+            toast("Please enter otp");
+            setIsLoading(false);
         }
     };
 
@@ -110,8 +117,9 @@ export const OtpVerificationModal = ({ setShowOtpModal, identifier, selectedMeth
                     <AlertDialogAction
                         onClick={(e) => validatePasskey(e)}
                         className="shad-primary-btn w-full hover:bg-[#05f27c] cursor-pointer"
+                        disabled={isLoading}
                     >
-                        Enter Otp
+                        {isLoading ? 'Loading...' : 'Enter Otp'}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>
