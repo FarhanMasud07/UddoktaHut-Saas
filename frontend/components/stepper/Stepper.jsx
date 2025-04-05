@@ -31,8 +31,7 @@ export function Stepper() {
 
 
     return (
-        <div className="w-full max-w-xl mx-auto space-y-10">
-
+        <div className="w-full max-w-xl mx-auto space-y-7 mt-10 md:mt-0">
             <div className="relative flex items-center justify-between px-2">
                 {steps.map((label, index) => (
                     <Step
@@ -45,7 +44,7 @@ export function Stepper() {
                 ))}
 
                 {/* Connecting Line Behind Steps */}
-                <div className="absolute top-5 left-5 right-5 h-[2px] bg-green-100 -z-10">
+                <div className="absolute top-5 left-5 right-5 h-[2px] bg-green-100 z-0">
                     <div
                         className={cn(
                             "h-full bg-green-400 transition-all duration-500 ease-in-out",

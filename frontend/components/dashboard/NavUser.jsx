@@ -35,12 +35,16 @@ import { useRouter } from "next/navigation"
 import { useTopLoader } from "nextjs-toploader"
 
 function extractFirstLetterOfUser(user) {
-    if (user && user.name)
-        return `${user.name.split(' ')[0]?.at(0)} ${user.name.split(' ')[1]?.at(0)}`;
+    if (user && user.name) {
+        const names = user.name.split(' ');
+        if (names[0] && names[1])
+            return `${names[0]?.at(0)} ${names[1]?.at(0)}`;
+        return `${names[0]?.at(0)}`
+    }
     return null;
 }
 
-export function NavUser() {
+export function NavUser({ isOnboarded = true }) {
     const router = useRouter();
     const loader = useTopLoader();
     const { isMobile } = useSidebar();
@@ -103,19 +107,23 @@ export function NavUser() {
                             </div>
                         </DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                        <DropdownMenuGroup>
-                            <DropdownMenuItem className="cursor-pointer">
-                                <Sparkles className="dark:text-green-400 text-green-500" />
-                                Upgrade to Pro
-                            </DropdownMenuItem>
-                        </DropdownMenuGroup>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuGroup>
-                            <DropdownMenuItem className="cursor-pointer">
-                                <BadgeCheck className="dark:text-green-400 text-green-500" />
-                                Account
-                            </DropdownMenuItem>
-                        </DropdownMenuGroup>
+                        {isOnboarded && (
+                            <>
+                                <DropdownMenuGroup>
+                                    <DropdownMenuItem className="cursor-pointer">
+                                        <Sparkles className="dark:text-green-400 text-green-500" />
+                                        Upgrade to Pro
+                                    </DropdownMenuItem>
+                                </DropdownMenuGroup>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuGroup>
+                                    <DropdownMenuItem className="cursor-pointer">
+                                        <BadgeCheck className="dark:text-green-400 text-green-500" />
+                                        Account
+                                    </DropdownMenuItem>
+                                </DropdownMenuGroup>
+                            </>
+                        )}
                         <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="justify-between cursor-pointer">
                             <section className="flex gap-2 items-center">
                                 <SunMoon className="dark:text-green-400 text-green-500" />

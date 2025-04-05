@@ -12,7 +12,6 @@ export const getOnboardedUser = async ({ id }) => {
       }
     );
     const authSuccess = await response.json();
-    if (!authSuccess?.data?.onboarded) return null;
     return authSuccess.data;
   } catch (err) {
     console.log(err);

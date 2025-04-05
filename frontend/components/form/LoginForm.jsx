@@ -14,7 +14,7 @@ import { useRouter } from "next/navigation";
 import SubmitButton from "../common/SubmitButton"
 import Link from "next/link"
 import { useTopLoader } from "nextjs-toploader";
-import { LoginFormValidation } from "@/lib/validation/loginFormValidation";
+import { LoginFormValidation } from "@/lib/validation/LoginFormValidation";
 
 
 const tabStyle = `
@@ -152,7 +152,7 @@ export function LoginForm({ className, ...props }) {
                     <SubmitButton
                         isLoading={isLoading}
                         className="w-full bg-green-400 hover:bg-[#05f27c] cursor-pointer"
-                        loadingMessage="Enrolling.."
+                        loadingMessage="Logging.."
                     >
                         <span className="font-semibold text-green-900">login</span>
                     </SubmitButton>
