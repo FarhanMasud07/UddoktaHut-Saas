@@ -4,6 +4,8 @@ import Role from "./Role.js";
 import User from "./User.js";
 import UserRole from "./UserRole.js";
 import Store from "./Store.js";
+import Subscription from "./Subscription.js";
+import Plan from "./Plan.js";
 
 // USER_ROLE (MANY TO MANY)
 User.belongsToMany(Role, {
@@ -19,10 +21,21 @@ Role.belongsToMany(User, {
 
 User.hasOne(Store, {
   foreignKey: "user_id",
+});
+
+Store.belongsTo(User, {
+  foreignKey: "user_id",
   onDelete: "CASCADE",
 });
 
-Store.belongsTo(User, { foreignKey: "user_id" });
+Plan.hasMany(Subscription, { foreignKey: "plan_id" });
+Subscription.belongsTo(Plan, { foreignKey: "plan_id" });
+
+Store.hasOne(Subscription, { foreignKey: "store_id" });
+Subscription.belongsTo(Store, {
+  foreignKey: "store_id",
+  onDelete: "CASCADE",
+});
 
 const syncSequlizeBasedOnEnvironment = async () => {
   await sequelize.authenticate();
@@ -35,7 +48,7 @@ const syncSequlizeBasedOnEnvironment = async () => {
       await sequelize.sync({ alter: true }); // ⚠️ Keeps data but may be slows
       break;
     case "production":
-      //await sequelize.sync({ force: true });
+      await sequelize.sync({ force: true });
       console.log("✅ Running in production mode, use migrations!");
       break;
     default:
@@ -51,4 +64,6 @@ export {
   Role,
   UserRole,
   Store,
+  Subscription,
+  Plan,
 };

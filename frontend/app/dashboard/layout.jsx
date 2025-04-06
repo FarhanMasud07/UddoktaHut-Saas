@@ -1,4 +1,4 @@
-import { getOnboardedUser } from '@/lib/actions/auth.action'
+import { getAuthenticUser } from '@/lib/actions/auth.action'
 import { headers } from 'next/headers';
 import { UserProvider } from '../context/UserContext';
 import { redirect } from 'next/navigation';
@@ -15,8 +15,11 @@ import NextTopLoader from 'nextjs-toploader'
 export default async function layout({ children }) {
     const requestHeader = await headers();
     const id = requestHeader.get('x-user-id');
-    const userOnboarded = await getOnboardedUser({ id });
-    if (!userOnboarded.onboarded) redirect('/logout')
+    const { user } = await getAuthenticUser({ id });
+    // console.log(user)
+    if (!user) redirect('/logout');
+    if (!user.onboarded) redirect('/logout');
+    const userOnboarded = user;
     return (
         <div>
             <NextTopLoader color="#05df72"
@@ -40,7 +43,7 @@ export default async function layout({ children }) {
                                 <NavUser />
                             </div>
                         </header>
-                        {children}
+                        {user.isActive ? children : "Get subscription please"}
                     </SidebarInset>
                 </SidebarProvider>
             </UserProvider>

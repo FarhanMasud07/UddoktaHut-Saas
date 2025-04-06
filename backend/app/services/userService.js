@@ -4,7 +4,12 @@ import {
   saveOtp,
   verifyOtp,
 } from "../lib/utils.js";
-import { Role, sequelize, UserRole } from "../models/RootModel.js";
+import {
+  Role,
+  sequelize,
+  UserRole,
+  Subscription,
+} from "../models/RootModel.js";
 import { env } from "../../../env.js";
 import { User, Store } from "../models/RootModel.js";
 import nodemailer from "nodemailer";
@@ -132,85 +137,58 @@ const onboardedAccess = async (id) => {
   };
 };
 
-const assignRoleToUserAndCreateStore = async (data) => {
-  const { userId, roles, storeName, storeAddress, storeType, storeUrl } = data;
-  const transaction = await sequelize.transaction();
-  try {
-    const existStore = await Store.findOne({
-      where: { store_name: storeName },
-      transaction,
-    });
+async function validateUserAndRoles(userId, roles, transaction) {
+  const [validUser, validRoles] = await Promise.all([
+    User.findOne({ where: { id: userId }, transaction }),
+    Role.findAll({ where: { id: roles }, transaction }),
+  ]);
 
-    if (existStore) throw new Error("This (business/store) name already exist");
+  if (!validUser) throw new Error("User is invalid");
+  if (validRoles.length !== roles.length)
+    throw new Error("Some roles are invalid");
 
-    const isAdmin = roles.includes(1);
-    const onboarded = isAdmin ? true : false;
+  return { validUser, validRoles };
+}
 
-    const validRoles = await Role.findAll({
-      where: {
-        id: roles,
-      },
-      transaction,
-    });
+async function clearPreviousUserData(userId, transaction) {
+  await Promise.all([
+    UserRole.destroy({ where: { user_id: userId }, transaction }),
+    Store.destroy({ where: { user_id: userId }, transaction }),
+  ]);
+}
 
-    if (validRoles.length !== roles.length)
-      throw new Error(`Some roles are invalid ${validRoles} ---  ${roles}`);
+async function createUserRoles(userId, roles, onboarded, transaction) {
+  return await UserRole.bulkCreate(
+    roles.map((roleId) => ({ user_id: userId, role_id: roleId, onboarded })),
+    { transaction }
+  );
+}
 
-    const validUser = await User.findOne({
-      where: {
-        id: userId,
-      },
-      transaction,
-    });
+async function createStoreAndSubscription(userId, storeData, transaction) {
+  const store = await Store.create(
+    { user_id: userId, ...storeData },
+    { transaction }
+  );
 
-    if (!validUser) throw new Error("User is invalid");
+  const now = new Date();
+  const trialEnds = new Date(now);
+  trialEnds.setDate(now.getDate() + 7);
 
-    await UserRole.destroy({ where: { user_id: validUser.id }, transaction });
+  await Subscription.create(
+    {
+      store_id: store.id,
+      status: "trialing",
+      start_date: now,
+      trial_ends_at: trialEnds,
+      end_date: trialEnds,
+      is_auto_renew: false,
+      plan_id: null,
+    },
+    { transaction }
+  );
 
-    await Store.destroy({ where: { user_id: validUser.id }, transaction });
-
-    const userRoles = await UserRole.bulkCreate(
-      roles.map((roleId) => ({
-        user_id: validUser.id,
-        role_id: roleId,
-        onboarded: onboarded,
-      })),
-      { transaction }
-    );
-
-    const store = await Store.create(
-      {
-        user_id: validUser.id,
-        store_name: storeName,
-        store_address: storeAddress,
-        store_type: storeType,
-        store_url: storeUrl,
-      },
-      { transaction }
-    );
-
-    await transaction.commit();
-
-    const storePayload = {
-      store_name: storeName,
-      store_address: storeAddress,
-      store_type: storeType,
-      store_url: storeUrl,
-    };
-
-    if (userRoles && userRoles.length && store)
-      return generateFinalTokenAfterOnboarded(
-        validUser,
-        roles,
-        storePayload,
-        onboarded
-      );
-    return null;
-  } catch (err) {
-    await transaction.rollback();
-    throw new Error(err.message);
-  }
-};
+  return store;
+}
 
 function generateFinalTokenAfterOnboarded(validUser, roles, store, onboarded) {
   const payload = validUser.email
@@ -236,6 +214,67 @@ function generateFinalTokenAfterOnboarded(validUser, roles, store, onboarded) {
   const tokens = generateTokens(payload, onboarded);
   return { tokens, onboarded };
 }
+
+const assignRoleToUserAndCreateStore = async (data) => {
+  const { userId, roles, storeName, storeAddress, storeType, storeUrl } = data;
+  const transaction = await sequelize.transaction();
+
+  try {
+    const existStore = await Store.findOne({
+      where: { store_name: storeName },
+      transaction,
+    });
+    if (existStore) throw new Error("This (business/store) name already exist");
+
+    const isAdmin = roles.includes(1);
+    const onboarded = isAdmin;
+
+    const { validUser } = await validateUserAndRoles(
+      userId,
+      roles,
+      transaction
+    );
+    await clearPreviousUserData(validUser.id, transaction);
+
+    const userRoles = await createUserRoles(
+      validUser.id,
+      roles,
+      onboarded,
+      transaction
+    );
+    const store = await createStoreAndSubscription(
+      validUser.id,
+      {
+        store_name: storeName,
+        store_address: storeAddress,
+        store_type: storeType,
+        store_url: storeUrl,
+      },
+      transaction
+    );
+
+    await transaction.commit();
+
+    const storePayload = {
+      store_name: storeName,
+      store_address: storeAddress,
+      store_type: storeType,
+      store_url: storeUrl,
+    };
+
+    if (userRoles?.length && store)
+      return generateFinalTokenAfterOnboarded(
+        validUser,
+        roles,
+        storePayload,
+        onboarded
+      );
+    return null;
+  } catch (err) {
+    await transaction.rollback();
+    throw new Error(err.message);
+  }
+};
 
 export {
   sendEmailVarification,

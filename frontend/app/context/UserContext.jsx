@@ -5,9 +5,10 @@ import { createContext, useContext, useState } from "react";
 const intialState = {
     name: 'Sumaiya Ahmed',
     email: 'ahmedahona@gmail.com',
-    phone: '+8801920190520',
+    phoneNumber: '+8801920190520',
     onboarded: true,
-    role: 2
+    role: 2,
+    isActive: false
 }
 
 const UserContext = createContext();

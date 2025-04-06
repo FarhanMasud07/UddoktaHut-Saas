@@ -3,13 +3,16 @@ import { StepperProvider } from "../context/StepperContext";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { NavUser } from "@/components/dashboard/NavUser";
 import { headers } from "next/headers";
-import { getOnboardedUser } from "@/lib/actions/auth.action";
 import { UserProvider } from "../context/UserContext";
+import { getAuthenticUser } from "@/lib/actions/auth.action";
+import { redirect } from "next/navigation";
 
 export default async function Onboarding() {
     const requestHeader = await headers();
     const id = requestHeader.get('x-user-id');
-    const userOnboarded = await getOnboardedUser({ id });
+    const { user } = await getAuthenticUser({ id });
+    if (!user) redirect('/logout');
+    const userOnboarded = user;
     return (
         <main className="p-6" >
             <UserProvider initialData={userOnboarded}>

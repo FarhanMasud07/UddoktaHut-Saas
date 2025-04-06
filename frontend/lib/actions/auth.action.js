@@ -1,18 +1,17 @@
 import { redirect } from "next/navigation";
 
-export const getOnboardedUser = async ({ id }) => {
+export const getAuthenticUser = async ({ id }) => {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/user/authenticate`,
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/subscription/status`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id }),
+        body: JSON.stringify({ userId: Number(id) }),
         credentials: "include",
       }
     );
-    const authSuccess = await response.json();
-    return authSuccess.data;
+    return await response.json();
   } catch (err) {
     console.log(err);
     redirect("/login");
