@@ -32,7 +32,7 @@ const syncSequlizeBasedOnEnvironment = async () => {
       //await sequelize.sync({ force: true });
       break;
     case "staging":
-      await sequelize.sync({ alter: true }); // ⚠️ Keeps data but may be slow
+      await sequelize.sync({ alter: true }); // ⚠️ Keeps data but may be slows
       break;
     case "production":
       await sequelize.sync({ force: true });
