@@ -14,7 +14,7 @@ import { useRouter } from "next/navigation";
 import SubmitButton from "../common/SubmitButton"
 import Link from "next/link"
 import { useTopLoader } from "nextjs-toploader";
-import { LoginFormValidation } from "@/lib/validation/LoginFormValidations";
+import { LoginFormValidation } from "@/lib/validation/LoginFormValidation";
 
 
 const tabStyle = `
