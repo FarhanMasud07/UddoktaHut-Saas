@@ -1,14 +1,47 @@
-import Link from "next/link";
+import CTA from "@/components/landing/Cta";
+import Features from "@/components/landing/Features";
+import Footer from "@/components/landing/Footer";
+import Hero from "@/components/landing/Hero";
+import HowItWorks from "@/components/landing/HowItWork";
+import Newsletter from "@/components/landing/NewsLetter";
+import Pricing from "@/components/landing/Pricing";
+import Testimonials from "@/components/landing/Testimonials";
+import VideoIntro from "@/components/landing/VideoIntro";
+
+
+export const metadata = {
+  title: "UddoktaHut - আপনার ব্যবসা ডিজিটাল করুন এক ক্লিকে",
+  description: "UddoktaHut - বাংলাদেশের সোশ্যাল কমার্স উদ্যোক্তাদের জন্য অল-ইন-ওয়ান SaaS প্ল্যাটফর্ম। সহজেই অনলাইন দোকান খুলুন ও অর্ডার ম্যানেজ করুন।",
+  openGraph: {
+    title: "UddoktaHut - আপনার ব্যবসা ডিজিটাল করুন এক ক্লিকে",
+    description: "UddoktaHut দিয়ে আপনার ফেসবুক ব্যবসা হোক আরো সহজ, স্মার্ট এবং অটোমেটেড।",
+    url: "https://uddoktahut.com",
+    siteName: "UddoktaHut",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "UddoktaHut Landing Page"
+      }
+    ],
+    locale: "bn_BD",
+    type: "website"
+  },
+};
 
 export default function Home() {
   return (
-    <main className="text-center px-52 py-52">
-      <section className="flex justify-between">
-        <h1 className="">Welcome to Uddoktahut</h1>
-      </section>
-      <Link href="/signup">
-        Sign Up
-      </Link>
+    <main className="bg-background text-foreground">
+      <Hero />
+      <VideoIntro />
+      <Features />
+      <HowItWorks />
+      <Pricing />
+      <Testimonials />
+      <Newsletter />
+      <CTA />
+      <Footer />
     </main>
   );
 }
