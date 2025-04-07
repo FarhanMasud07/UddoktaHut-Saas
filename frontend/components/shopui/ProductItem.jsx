@@ -1,12 +1,12 @@
-
-"use client";
-
-import Link from "next/link";
+import NextButton from "../common/NextButton";
 
 function ProductItem({ item }) {
   return (
     <div key={item.productId}>
-      <Link href={`/${item.productId}`}>{item.productName}</Link>
+      <NextButton
+        title={item.productName}
+        destination={item.productId}
+      />
     </div>
   );
 }
