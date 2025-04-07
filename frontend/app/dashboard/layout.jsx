@@ -10,26 +10,16 @@ import {
     SidebarProvider,
     SidebarTrigger,
 } from "@/components/ui/sidebar"
-import NextTopLoader from 'nextjs-toploader'
 
 export default async function layout({ children }) {
     const requestHeader = await headers();
     const id = requestHeader.get('x-user-id');
     const { user } = await getAuthenticUser({ id });
-    // console.log(user)
     if (!user) redirect('/logout');
     if (!user.onboarded) redirect('/logout');
     const userOnboarded = user;
     return (
         <div>
-            <NextTopLoader color="#05df72"
-                initialPosition={0.09}
-                crawlSpeed={200}
-                height={6}
-                crawl={true}
-                showSpinner={true}
-                easing="ease"
-                speed={600} />
             <UserProvider initialData={userOnboarded}>
                 <SidebarProvider>
                     <AppSidebar />

@@ -3,7 +3,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/sonner";
-import NextTopLoader from 'nextjs-toploader';
+import LoaderTopClient from "@/components/common/LoaderTopClient";
 
 
 const fontSans = Plus_Jakarta_Sans({
@@ -32,15 +32,10 @@ export default function RootLayout({ children }) {
           enableSystem
           disableTransitionOnChange
         >
-          <NextTopLoader color="#05df72"
-            initialPosition={0.09}
-            crawlSpeed={200}
-            height={6}
-            crawl={true}
-            showSpinner={true}
-            easing="ease"
-            speed={600} />
+
+          <LoaderTopClient />
           {children}
+
           <Toaster />
         </ThemeProvider>
       </body>

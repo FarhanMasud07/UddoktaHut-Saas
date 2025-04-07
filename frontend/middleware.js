@@ -39,14 +39,11 @@ export async function middleware(req) {
       const isAdmin = roles.includes(allRoles.admin);
       const isEmployee = roles.includes(allRoles.employee);
 
-      if (!onboarded && path !== "/onboarding")
+      if (!onboarded && path !== "/onboarding") {
         return NextResponse.redirect(new URL("/onboarding", req.url));
+      }
 
-      if (
-        (isAdmin || isEmployee) &&
-        onboarded &&
-        (path === "/onboarding" || path === "/onboarding/setup")
-      ) {
+      if ((isAdmin || isEmployee) && onboarded && path === "/onboarding") {
         return NextResponse.redirect(new URL("/dashboard", req.url));
       }
 

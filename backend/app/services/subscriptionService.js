@@ -8,6 +8,14 @@ import {
   Subscription,
 } from "../models/RootModel.js";
 
+function checkValidity(subscription, now) {
+  return (
+    (subscription.status === "trialing" &&
+      new Date(subscription.trial_ends_at) > now) ||
+    (subscription.status === "active" && new Date(subscription.end_date) > now)
+  );
+}
+
 const getSubscriptionStatus = async ({ userId }) => {
   const user = await User.findOne({
     where: { id: userId },
@@ -34,11 +42,8 @@ const getSubscriptionStatus = async ({ userId }) => {
     if (!subscription) throw new Error("No subscription found");
 
     const now = new Date();
-    const isActive =
-      (subscription.status === "trialing" &&
-        new Date(subscription.trial_ends_at) > now) ||
-      (subscription.status === "active" &&
-        new Date(subscription.end_date) > now);
+    const isActive = checkValidity(subscription, now);
+
     const userData = {
       name: user.name,
       email: user.email,
@@ -61,4 +66,25 @@ const getSubscriptionStatus = async ({ userId }) => {
   return { user: userData };
 };
 
-export { getSubscriptionStatus };
+const getSubscribedStore = async ({ storeName }) => {
+  const store = await Store.findOne({ where: { store_name: storeName } });
+
+  if (!store) return { storeData: null };
+
+  const subscription = await Subscription.findOne({
+    where: { store_id: store.id },
+  });
+
+  if (!subscription) return { store: null };
+
+  const now = new Date();
+  const isActive = checkValidity(subscription, now);
+
+  const payload = {
+    ...store.toJSON(),
+    isActive,
+  };
+  return { storeData: payload };
+};
+
+export { getSubscriptionStatus, getSubscribedStore };

@@ -6,4 +6,8 @@ const subscriptionSchema = z.object({
     .min(1, { message: "User ID must be a positive integer." }),
 });
 
-export { subscriptionSchema };
+const subscribedStoreSchema = z.object({
+  storeName: z.string({ message: "Store name is required" }),
+});
+
+export { subscriptionSchema, subscribedStoreSchema };

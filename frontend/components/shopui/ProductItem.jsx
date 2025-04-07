@@ -1,19 +1,15 @@
+
 "use client";
 
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 function ProductItem({ item }) {
-  const router = useRouter();
   return (
     <div key={item.productId}>
-      <p
-        onClick={() => router.push(`/${item.productId}`)}
-        className="mt-6 cursor-pointer"
-      >
-        {item.productName}
-      </p>
+      <Link href={`/${item.productId}`}>{item.productName}</Link>
     </div>
   );
 }
 
 export default ProductItem;
+

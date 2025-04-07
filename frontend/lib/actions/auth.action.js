@@ -18,6 +18,23 @@ export const getAuthenticUser = async ({ id }) => {
   }
 };
 
+export const getAuthenticStore = async ({ storeName }) => {
+  // console.log(storeName);
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/subscription/store/${storeName}`,
+      {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+      }
+    );
+    return await response.json();
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 export const registerUser = async (selectedMethod, data) => {
   try {
     const isEmail = selectedMethod === "email";

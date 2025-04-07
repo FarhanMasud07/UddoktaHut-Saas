@@ -40,7 +40,7 @@ const getUserToken = async (userData) => {
   const payload = {
     id: user.id,
     email: user.email,
-    roles: user.Roles.map((role) => role.role_name),
+    roles: user.Roles.map((role) => role.id),
     storeName: user.Store?.store_name,
     storeAddress: user.Store?.store_address,
     storeType: user.Store?.store_type,
