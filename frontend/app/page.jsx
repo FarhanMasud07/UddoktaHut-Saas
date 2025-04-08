@@ -1,12 +1,16 @@
 import CTA from "@/components/landing/CTA";
 import Features from "@/components/landing/Features";
 import Footer from "@/components/landing/Footer";
+import Header from "@/components/landing/Header";
 import Hero from "@/components/landing/Hero";
+// import Hero from "@/components/landing/Hero";
 import HowItWorks from "@/components/landing/HowItWork";
+// import Navbar from "@/components/landing/Navbar";
 import Newsletter from "@/components/landing/NewsLetter";
 import Pricing from "@/components/landing/Pricing";
 import Testimonials from "@/components/landing/Testimonials";
 import VideoIntro from "@/components/landing/VideoIntro";
+import { ShowProvider } from "./context/ShowContext";
 
 
 export const metadata = {
@@ -33,15 +37,20 @@ export const metadata = {
 export default function Home() {
   return (
     <main className="bg-background text-foreground">
-      <Hero />
-      <VideoIntro />
-      <Features />
-      <HowItWorks />
-      <Pricing />
-      <Testimonials />
-      <Newsletter />
-      <CTA />
-      <Footer />
+      <ShowProvider>
+        <Header>
+          <Hero />
+          {/* <VideoIntro />
+          <Features />
+          <HowItWorks />
+          <Pricing />
+          <Testimonials />
+          <Newsletter />
+          <CTA />
+          <Footer /> */}
+        </Header>
+      </ShowProvider>
+
     </main>
   );
 }
