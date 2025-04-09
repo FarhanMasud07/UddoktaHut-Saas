@@ -1,70 +1,69 @@
-"use client";
-import { motion } from "framer-motion";
-import { ShoppingCart, Wallet, Truck } from "lucide-react";
+'use client'
 
-const features = [
+import Image from 'next/image';
+
+const featureData = [
     {
-        title: "এক ক্লিকে দোকান তৈরি",
-        description: "Facebook প্রোডাক্ট থেকে শুরু করে সম্পূর্ণ অনলাইন শপ মাত্র এক ক্লিকে তৈরি করুন।",
-        icon: ShoppingCart,
-        color: "from-green-400 to-green-600",
+        image: "/assets/images/store.png",
+        title: 'Store Setup',
+        description: 'Get your online store up and running easily with our intuitive platform.',
+        bgColor: "bg-white dark:bg-gradient-to-r dark:from-gray-50 dark:to-dark-700"
     },
     {
-        title: "অর্ডার অটোমেশন",
-        description: "মেসেজ, কমেন্ট ও ইনবক্স থেকে অর্ডার নিজে নিজেই তৈরি হবে। সময় বাঁচান, ব্যবসা বাড়ান।",
-        icon: Wallet,
-        color: "from-purple-500 to-purple-700",
+        image: "/assets/images/document.png",
+        title: 'Order Management',
+        description: 'Automate your order processing workflow and save valuable time.',
+        bgColor: 'bg-green-50 dark:bg-gradient-to-r dark:from-gray-50 dark:to-dark-700',
     },
     {
-        title: "পেমেন্ট ও ডেলিভারি",
-        description: "bKash/Nagad পেমেন্ট ও Pathao/RedX দিয়ে ডেলিভারি বুকিং—সব কিছু একসাথে।",
-        icon: Truck,
-        color: "from-blue-500 to-blue-700",
+        image: "/assets/images/payment-integration.png",
+        title: 'Payment Integration',
+        description: 'Accept payments through multiple payment providers like Stripe and bKash.',
+        bgColor: 'bg-green-50 dark:bg-gradient-to-r dark:from-gray-50 dark:to-dark-700',
+    },
+    {
+        image: "/assets/images/delivery-system.png",
+        title: 'Delivery System',
+        description: 'Connect with multiple delivery providers like Pathao and RedX for smooth logistics.',
+        bgColor: 'bg-white dark:bg-gradient-to-r dark:from-gray-50 dark:to-dark-700',
     },
 ];
 
-export default function Features() {
+const Features = () => {
     return (
-        <section className="py-24 bg-white dark:bg-background px-6">
-            <div className="max-w-6xl mx-auto text-center">
-                <motion.h2
-                    className="text-4xl sm:text-5xl font-bold mb-12 text-gray-900 dark:text-white"
-                    initial={{ opacity: 0, y: -20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6 }}
-                    viewport={{ once: true }}
-                >
-                    আমাদের অসাধারণ ফিচারসমূহ
-                </motion.h2>
+        <section id="keyfeatures" className="bg-gray-100  dark:bg-gradient-to-r dark:from-dark-200 dark:to-dark-500 
+        py-8 sm:py-16">
+            <div className="container mx-auto px-6 text-center max-w-5xl">
+                <h2 className="text-2xl sm:text-4xl font-extrabold text-green-950
+                 mb-8 sm:mb-12  dark:text-dark-700">
+                    Key Features of UddoktaHut
+                </h2>
 
-                <div className="grid md:grid-cols-3 gap-8">
-                    {features.map((feature, index) => {
-                        const Icon = feature.icon;
-                        return (
-                            <motion.div
-                                key={index}
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.5, delay: index * 0.2 }}
-                                viewport={{ once: true }}
-                                className="bg-white/80 dark:bg-white/5 backdrop-blur-md border border-border dark:border-white/10 p-8 rounded-2xl shadow-xl hover:shadow-2xl transition duration-300"
-                            >
-                                <div
-                                    className={`w-14 h-14 mx-auto mb-6 rounded-full bg-gradient-to-br ${feature.color} flex items-center justify-center text-white`}
-                                >
-                                    <Icon className="w-6 h-6" />
-                                </div>
-                                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                                    {feature.title}
-                                </h3>
-                                <p className="text-muted-foreground text-sm leading-relaxed">
-                                    {feature.description}
-                                </p>
-                            </motion.div>
-                        );
-                    })}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
+                    {featureData.map((feature, index) => (
+                        <div
+                            key={index}
+                            className={`${feature.bgColor} flex items-center gap-2 p-8 shadow-sm hover:scale-105 
+                            transition-all rounded-xl`}
+                        >
+                            <div className='relative w-fit'>
+                                <Image src={feature.image}
+                                    alt='image'
+                                    width={140}
+                                    height={120}
+                                    className="object-cover"
+                                />
+                            </div>
+                            <div className='text-start w-fit'>
+                                <h3 className="text-xl sm:text-2xl font-semibold mb-2 text-gray-800">{feature.title}</h3>
+                                <p className='text-sm sm:text-[16px] text-gray-800'>{feature.description}</p>
+                            </div>
+                        </div>
+                    ))}
                 </div>
             </div>
         </section>
     );
-}
+};
+
+export default Features;

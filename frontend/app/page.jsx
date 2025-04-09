@@ -40,8 +40,8 @@ export default function Home() {
       <ShowProvider>
         <Header>
           <Hero />
-          {/* <VideoIntro />
           <Features />
+          {/* <VideoIntro />
           <HowItWorks />
           <Pricing />
           <Testimonials />

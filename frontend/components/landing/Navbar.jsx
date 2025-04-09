@@ -27,7 +27,7 @@ const Navbar = ({ toggleMenu }) => {
 
             <nav className={`lg:flex space-x-6 hidden`}>
                 <ul className="flex space-x-6">
-                    <li><a href="#" className="hover:text-green-300 transition-colors">Features</a></li>
+                    <li><a href="#keyfeatures" className="hover:text-green-300 transition-colors">Features</a></li>
                     <li><a href="#" className="hover:text-green-300 transition-colors">Pricing</a></li>
                     <li><a href="#" className="hover:text-green-300 transition-colors">About</a></li>
                     <li><a href="#" className="hover:text-green-300 transition-colors">Contact</a></li>
