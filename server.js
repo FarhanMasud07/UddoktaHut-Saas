@@ -29,6 +29,9 @@ const startServer = async () => {
     app.use("/api", backendApp);
 
     app.all("*", (req, res) => {
+      if (!req.url.startsWith("/api")) {
+        res.setHeader("Cache-Control", "public, max-age=86400, s-maxage=86400");
+      }
       return handle(req, res);
     });
 
