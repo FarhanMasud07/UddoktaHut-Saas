@@ -1,3 +1,5 @@
+export const dynamic = 'false';
+
 import CTA from "@/components/landing/CTA";
 import Features from "@/components/landing/Features";
 import Footer from "@/components/landing/Footer";
