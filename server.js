@@ -17,13 +17,12 @@ app.use((req, res, next) => {
     const originalSetHeader = res.setHeader;
     res.setHeader = function (name, value) {
       if (name.toLowerCase() === "etag" || name.toLowerCase() === "vary")
-        return; // Prevent setting ETag and Vary
+        return; // Prevent setting ETag and Vary headers
       originalSetHeader.call(this, name, value);
     };
 
     // Remove Vary header to ensure Cloudflare can cache consistently
-    res.removeHeader("Vary"); // This will remove the 'Vary' header from non-dynamic pages
-    console.log("Response Headers (before sending):", res.getHeaders());
+    res.removeHeader("Vary"); // This will remove the 'Vary' header for non-dynamic pages
   }
   next();
 });
@@ -35,13 +34,19 @@ const startServer = async () => {
     app.use("/api", backendApp);
 
     app.all("*", (req, res) => {
+      // Apply cache control for non-API, non-dashboard, non-onboarding pages
       if (
         !req.url.startsWith("/api") &&
         !req.url.startsWith("/dashboard") &&
         !req.url.startsWith("/onboarding")
       ) {
+        // Set Cache-Control headers for caching static pages
         res.setHeader("Cache-Control", "public, max-age=86400, s-maxage=86400");
+      } else {
+        // For dynamic pages like dashboard or onboarding, ensure no cache control headers are set
+        res.setHeader("Cache-Control", "no-store, must-revalidate");
       }
+
       return handle(req, res);
     });
 
