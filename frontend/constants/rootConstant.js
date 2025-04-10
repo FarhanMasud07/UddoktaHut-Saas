@@ -25,7 +25,7 @@ export const passwordRules = [
   // },
 ];
 
-export const protectedRoutes = ["/onboarding", "/dashboard", "/employee"];
+export const protectedRoutes = ["/onboarding", "/dashboard"];
 
 export const allRoles = {
   admin: 1,

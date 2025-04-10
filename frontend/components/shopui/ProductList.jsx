@@ -1,67 +1,25 @@
 import NoDataFound from "../common/NoDataFound";
 import ProductItem from "./ProductItem";
 
-const validProductsFromShop = [
-  {
-    name: "shoporia",
-    data: [
-      {
-        productId: 1,
-        productName: "Elegant Baby Soap",
-      },
-      {
-        productId: 2,
-        productName: "Baby Diper",
-      },
-      {
-        productId: 3,
-        productName: "Chocolaes Caramel",
-      },
-      {
-        productId: 4,
-        productName: "Shampoo",
-      },
-    ],
-  },
-  {
-    name: "funnymg",
-    data: [
-      {
-        productId: 1,
-        productName: "Halkhata",
-      },
-      {
-        productId: 2,
-        productName: "Mojar Boi",
-      },
-      {
-        productId: 3,
-        productName: "Horek Rokomer Kobita",
-      },
-      {
-        productId: 4,
-        productName: "Kanna Vora Jol",
-      },
-    ],
-  },
-];
+export default function ProductList({
+  products,
+  ctaColor = "bg-green-400",
+  ctaHoverColor = "#05f27c", }) {
 
-function ProductList({ shopSlug }) {
-  const shop = validProductsFromShop.find((item) => item.name === shopSlug);
-
-  if (!shop) return <NoDataFound title="No products found" />;
+  if (!products || !products.length) return <NoDataFound title="No products found" />;
 
   return (
-    <div style={{ textAlign: "center", padding: "50px" }}>
-      {shop.data.length ? (
-        shop.data.map((item) => (
-          <ProductItem key={item.productId} item={item} />
-        ))
-      ) : (
-        <NoDataFound title="No products found" />
-      )}
-    </div>
+    <main className="flex-1 overflow-y-auto p-6 bg-neutral-100">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {products.map((product, i) => (
+          <ProductItem
+            key={product + i}
+            product={product}
+            ctaColor={ctaColor}
+            ctaHoverColor={ctaHoverColor}
+          />
+        ))}
+      </div>
+    </main>
   );
 }
-
-export default ProductList;
