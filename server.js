@@ -9,13 +9,15 @@ const handle = nextApp.getRequestHandler();
 
 const app = express();
 
-// ✅ Block ETag for frontend pages to allow full Cloudflare caching
+// ✅ Block ETag and Vary headers for frontend pages to allow full Cloudflare caching
 // ✅ Allow ETag on /api routes
 app.use((req, res, next) => {
+  // Only strip ETag and Vary for non-API requests
   if (!req.url.startsWith("/api")) {
     const originalSetHeader = res.setHeader;
     res.setHeader = function (name, value) {
-      if (name.toLowerCase() === "etag") return;
+      if (name.toLowerCase() === "etag" || name.toLowerCase() === "vary")
+        return; // Prevent setting ETag and Vary
       originalSetHeader.call(this, name, value);
     };
   }
