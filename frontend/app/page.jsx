@@ -1,10 +1,9 @@
-export const dynamic = 'force-static';
+// export const dynamic = 'force-static';
 
 import Features from "@/components/landing/Features";
 import Header from "@/components/landing/Header";
 import Hero from "@/components/landing/Hero";
 import { ShowProvider } from "./context/ShowContext";
-
 
 export const metadata = {
   title: "UddoktaHut - আপনার ব্যবসা ডিজিটাল করুন এক ক্লিকে",
