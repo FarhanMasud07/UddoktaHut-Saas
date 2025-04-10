@@ -1,4 +1,4 @@
-// export const dynamic = 'force-static';
+export const dynamic = 'force-static';
 
 import Features from "@/components/landing/Features";
 import Header from "@/components/landing/Header";

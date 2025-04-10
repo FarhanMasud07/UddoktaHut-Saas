@@ -11,22 +11,22 @@ const app = express();
 
 // ✅ Block ETag and Vary headers for frontend pages to allow full Cloudflare caching
 // ✅ Allow ETag on /api routes
-// app.use((req, res, next) => {
-//   // Only strip ETag and Vary for non-API requests
-//   if (!req.url.startsWith("/api")) {
-//     const originalSetHeader = res.setHeader;
-//     res.setHeader = function (name, value) {
-//       if (name.toLowerCase() === "etag" || name.toLowerCase() === "vary")
-//         return; // Prevent setting ETag and Vary
-//       originalSetHeader.call(this, name, value);
-//     };
+app.use((req, res, next) => {
+  // Only strip ETag and Vary for non-API requests
+  if (!req.url.startsWith("/api")) {
+    const originalSetHeader = res.setHeader;
+    res.setHeader = function (name, value) {
+      if (name.toLowerCase() === "etag" || name.toLowerCase() === "vary")
+        return; // Prevent setting ETag and Vary
+      originalSetHeader.call(this, name, value);
+    };
 
-//     // Remove Vary header to ensure Cloudflare can cache consistently
-//     res.removeHeader("Vary"); // This will remove the 'Vary' header from non-dynamic pages
-//     console.log("Response Headers (before sending):", res.getHeaders());
-//   }
-//   next();
-// });
+    // Remove Vary header to ensure Cloudflare can cache consistently
+    res.removeHeader("Vary"); // This will remove the 'Vary' header from non-dynamic pages
+    console.log("Response Headers (before sending):", res.getHeaders());
+  }
+  next();
+});
 
 const startServer = async () => {
   try {
@@ -35,13 +35,13 @@ const startServer = async () => {
     app.use("/api", backendApp);
 
     app.all("*", (req, res) => {
-      // if (
-      //   !req.url.startsWith("/api") &&
-      //   !req.url.startsWith("/dashboard") &&
-      //   !req.url.startsWith("/onboarding")
-      // ) {
-      //   res.setHeader("Cache-Control", "public, max-age=86400, s-maxage=86400");
-      // }
+      if (
+        !req.url.startsWith("/api") &&
+        !req.url.startsWith("/dashboard") &&
+        !req.url.startsWith("/onboarding")
+      ) {
+        res.setHeader("Cache-Control", "public, max-age=86400, s-maxage=86400");
+      }
       return handle(req, res);
     });
 
