@@ -23,6 +23,7 @@ app.use((req, res, next) => {
 
     // Remove Vary header to ensure Cloudflare can cache consistently
     res.removeHeader("Vary"); // This will remove the 'Vary' header from non-dynamic pages
+    console.log("Response Headers (before sending):", res.getHeaders());
   }
   next();
 });
