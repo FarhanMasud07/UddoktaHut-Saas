@@ -20,6 +20,9 @@ app.use((req, res, next) => {
         return; // Prevent setting ETag and Vary
       originalSetHeader.call(this, name, value);
     };
+
+    // Remove Vary header to ensure Cloudflare can cache consistently
+    res.removeHeader("Vary"); // This will remove the 'Vary' header from non-dynamic pages
   }
   next();
 });
