@@ -1,4 +1,4 @@
-export const dynamic = 'false';
+export const dynamic = 'force-static';
 
 import CTA from "@/components/landing/CTA";
 import Features from "@/components/landing/Features";
