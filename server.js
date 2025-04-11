@@ -41,7 +41,10 @@ const startServer = async () => {
         !req.url.startsWith("/onboarding")
       ) {
         // Set Cache-Control headers for caching static pages
-        res.setHeader("Cache-Control", "public, max-age=86400, s-maxage=86400");
+        res.setHeader(
+          "Cache-Control",
+          "public, max-age=86400, s-maxage=86400, immutable"
+        );
       } else {
         // For dynamic pages like dashboard or onboarding, ensure no cache control headers are set
         res.setHeader("Cache-Control", "no-store, must-revalidate");
