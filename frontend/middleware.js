@@ -7,22 +7,21 @@ export async function middleware(req) {
   const host = req.headers.get("host") || "";
 
   if (!host) return NextResponse.next();
-
   if (req.nextUrl.pathname.startsWith("/_next/")) return NextResponse.next();
-
   if (req.nextUrl.pathname.startsWith("/api/")) return NextResponse.next();
 
   const isProtectedRoute = protectedRoutes.some((route) =>
     req.nextUrl.pathname.startsWith(route)
   );
+
   const path = req.nextUrl.pathname;
+
   if (isProtectedRoute) {
     const accessToken = req.cookies.get("accessToken")?.value;
     if (!accessToken) return NextResponse.redirect(new URL("/login", req.url));
 
     try {
       const secret = new TextEncoder().encode(process.env.JWT_SECRET);
-
       const { payload } = await jwtVerify(accessToken, secret);
 
       const requestHeaders = new Headers(req.headers);
@@ -31,7 +30,6 @@ export async function middleware(req) {
         return NextResponse.redirect(new URL("/login", req.url));
 
       requestHeaders.set("x-user-id", payload.id);
-
       if (payload.storeUrl) requestHeaders.set("x-store-url", payload.storeUrl);
 
       const onboarded = payload.onboarded || false;
@@ -58,9 +56,25 @@ export async function middleware(req) {
     }
   }
 
-  return CONFIG.isProd
+  // ✅ Subdomain rewriting logic
+  const res = CONFIG.isProd
     ? productionMiddleware(host, req)
     : developmentMiddleware(host, req);
+
+  // ✅ Cloudflare header cleanup for static HTML caching
+  res.headers.delete("Vary");
+  res.headers.delete("Set-Cookie");
+  res.headers.delete("ETag");
+
+  const accept = req.headers.get("accept") || "";
+  if (accept.includes("text/html")) {
+    res.headers.set(
+      "Cache-Control",
+      "public, max-age=86400, s-maxage=86400, immutable"
+    );
+  }
+
+  return res;
 }
 
 function productionMiddleware(host, req) {
@@ -70,7 +84,6 @@ function productionMiddleware(host, req) {
 
   if (host.endsWith(".uddoktahut.com")) {
     const subdomain = host.split(".")[0];
-
     if (subdomain) {
       const url = req.nextUrl.clone();
       url.pathname = `/store/${subdomain}${req.nextUrl.pathname}`;
@@ -92,7 +105,6 @@ function developmentMiddleware(host, req) {
 
   if (host.endsWith(".uddoktahut.local")) {
     const subdomain = host.split(".")[0];
-
     if (subdomain) {
       const url = req.nextUrl.clone();
       url.pathname = `/store/${subdomain}${req.nextUrl.pathname}`;

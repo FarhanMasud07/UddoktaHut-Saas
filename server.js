@@ -9,48 +9,21 @@ const handle = nextApp.getRequestHandler();
 
 const app = express();
 
-// ✅ Block ETag and Vary headers for frontend pages to allow full Cloudflare caching
-// ✅ Allow ETag on /api routes
-app.use((req, res, next) => {
-  // Only strip ETag and Vary for non-API requests
-  if (!req.url.startsWith("/api")) {
-    const originalSetHeader = res.setHeader;
-    res.setHeader = function (name, value) {
-      if (name.toLowerCase() === "etag" || name.toLowerCase() === "vary")
-        return; // Prevent setting ETag and Vary headers
-      originalSetHeader.call(this, name, value);
-    };
-
-    // Remove Vary header to ensure Cloudflare can cache consistently
-    res.removeHeader("Vary"); // This will remove the 'Vary' header for non-dynamic pages
-  }
-  next();
-});
+// ✅ No longer needed: remove header stripping middleware
+// app.use(...) — gone
 
 const startServer = async () => {
   try {
     await nextApp.prepare();
 
+    // ✅ Mount backend API routes
     app.use("/api", backendApp);
 
+    // ✅ Serve everything else through Next.js
     app.all("*", (req, res) => {
-      // Apply cache control for non-API, non-dashboard, non-onboarding pages
-      if (
-        !req.url.startsWith("/api") &&
-        !req.url.startsWith("/dashboard") &&
-        !req.url.startsWith("/onboarding")
-      ) {
-        // Set Cache-Control headers for caching static pages
-        res.setHeader(
-          "Cache-Control",
-          "public, max-age=86400, s-maxage=86400, immutable"
-        );
-      } else {
-        // For dynamic pages like dashboard or onboarding, ensure no cache control headers are set
-        res.setHeader("Cache-Control", "no-store, must-revalidate");
-      }
-
-      res.removeHeader("Set-Cookie");
+      // ❌ Remove all header manipulation here
+      // ❌ Don't strip Set-Cookie or Vary — handled by Next.js middleware now
+      // ❌ Don't set Cache-Control manually here
 
       return handle(req, res);
     });
