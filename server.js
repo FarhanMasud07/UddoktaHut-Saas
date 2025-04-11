@@ -50,6 +50,8 @@ const startServer = async () => {
         res.setHeader("Cache-Control", "no-store, must-revalidate");
       }
 
+      res.removeHeader("Set-Cookie");
+
       return handle(req, res);
     });
 
